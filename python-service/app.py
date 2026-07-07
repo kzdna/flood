@@ -186,11 +186,29 @@ def health():
 
 @app.post("/api/predict")
 def predict():
+
+    if "image" not in request.files:
+        return jsonify({
+            "success": False,
+            "message": "Tidak ada gambar."
+        }), 400
+
+    image = request.files["image"]
+
+    filename = f"{uuid.uuid4()}.png"
+
+    image_path = os.path.join(
+        UPLOAD_FOLDER,
+        filename
+    )
+
+    image.save(image_path)
+
     return jsonify({
         "success": True,
-        "prediction": "TEST",
-        "confidence": 99,
-        "flood_area": 12
+        "prediction": "UPLOAD BERHASIL",
+        "confidence": 100,
+        "flood_area": 0
     })
 
 import os
