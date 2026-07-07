@@ -187,81 +187,51 @@ def health():
 @app.post("/api/predict")
 def predict():
 
-    if "image" not in request.files:
+    try:
+
+        if "image" not in request.files:
+            return jsonify({
+                "success": False,
+                "message": "Tidak ada gambar."
+            }), 400
+
+        image = request.files["image"]
+
+        filename = f"{uuid.uuid4()}.png"
+
+        image_path = os.path.join(
+            UPLOAD_FOLDER,
+            filename
+        )
+
+        image.save(image_path)
+
+        img_orig, pred_mask, overlay, confidence, flood_area = predict_single(
+            image_path
+        )
+
+        prediction = (
+            "Flood"
+            if flood_area >= 5
+            else "No Flood"
+        )
+
         return jsonify({
-            "success": False,
-            "message": "Tidak ada gambar."
-        }), 400
+            "success": True,
+            "prediction": prediction,
+            "confidence": round(confidence,2),
+            "flood_area": round(flood_area,2)
+        })
 
-    image = request.files["image"]
+    except Exception as e:
 
-    filename = f"{uuid.uuid4()}.png"
-    image_path = os.path.join(
-        UPLOAD_FOLDER,
-        filename
-    )
+        import traceback
 
-    image.save(image_path)
+        traceback.print_exc()
 
-    img_orig, pred_mask, overlay, confidence, flood_area = predict_single(
-        image_path
-    )
-
-    prediction = (
-        "Flood"
-        if flood_area >= 5
-        else "No Flood"
-    )
-
-    overlay_name = f"overlay_{filename}"
-
-    overlay_path = os.path.join(
-        RESULT_FOLDER,
-        overlay_name
-    )
-
-    Image.fromarray(
-        overlay
-    ).save(
-        overlay_path
-    )
-
-    mask_name = f"mask_{filename}"
-
-    mask_path = os.path.join(
-        RESULT_FOLDER,
-        mask_name
-    )
-
-    Image.fromarray(
-        (pred_mask * 255).astype(np.uint8)
-    ).save(
-        mask_path
-    )
-
-    return jsonify({
-
-        "success": True,
-
-        "prediction": prediction,
-
-        "confidence": round(
-            confidence,
-            2
-        ),
-
-        "flood_area": round(
-            flood_area,
-            2
-        ),
-
-        "filename": filename,
-
-        "overlay": overlay_name,
-
-        "mask": mask_name
-
-    })
+        return jsonify({
+            "error": str(e)
+        }),500
 
 import os
 
