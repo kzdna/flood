@@ -189,30 +189,28 @@ def predict():
 
     try:
 
-        print("STEP 1")
+        print("1. Request masuk", flush=True)
 
         if "image" not in request.files:
-            return jsonify({"error":"no image"}),400
+            return jsonify({"error":"No image"}),400
 
-        print("STEP 2")
+        print("2. Ada image", flush=True)
 
-        image=request.files["image"]
+        image = request.files["image"]
 
-        filename=f"{uuid.uuid4()}.png"
+        filename = f"{uuid.uuid4()}.png"
 
-        image_path=os.path.join(UPLOAD_FOLDER,filename)
+        image_path = os.path.join(UPLOAD_FOLDER, filename)
 
         image.save(image_path)
 
-        print("STEP 3")
+        print("3. Image tersimpan", flush=True)
 
-        img_orig,pred_mask,overlay,confidence,flood_area=predict_single(image_path)
+        img_orig, pred_mask, overlay, confidence, flood_area = predict_single(image_path)
 
-        print("STEP 4")
+        print("4. Predict selesai", flush=True)
 
-        prediction="Flood" if flood_area>=5 else "No Flood"
-
-        print("STEP 5")
+        prediction = "Flood" if flood_area >= 5 else "No Flood"
 
         return jsonify({
             "success":True,
@@ -224,9 +222,8 @@ def predict():
     except Exception as e:
 
         import traceback
-        traceback.print_exc()
 
-        print("ERROR:",e)
+        traceback.print_exc()
 
         return jsonify({
             "error":str(e)
