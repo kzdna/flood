@@ -18,7 +18,20 @@ from torchvision.models.segmentation import (
 )
 
 app = Flask(__name__)
-CORS(app)
+
+CORS(
+    app,
+    resources={
+        r"/api/*": {
+            "origins": [
+                "https://fortunate-mindfulness-production-d9ef.up.railway.app"
+            ]
+        }
+    },
+    supports_credentials=True,
+    methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization"]
+)
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
