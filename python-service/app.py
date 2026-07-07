@@ -26,7 +26,7 @@ MODEL_PATH = "best_deeplabv3_flood_inference.pth"
 
 if not os.path.exists(MODEL_PATH):
     gdown.download(
-        "https://drive.google.com/uc?id=1mfoUWVcW7AeYquFMUvzxCnKQJYJ1BP0Y",
+        "https://drive.google.com/file/d/18SE9Mon9ivsNmePuKb64SwwTzQnPfJt9/view?usp=sharing",
         MODEL_PATH,
         quiet=False
     )
