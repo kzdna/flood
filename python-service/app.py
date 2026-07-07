@@ -26,7 +26,7 @@ MODEL_PATH = "best_deeplabv3_flood_inference.pth"
 
 if not os.path.exists(MODEL_PATH):
     gdown.download(
-        "https://drive.google.com/file/d/18SE9Mon9ivsNmePuKb64SwwTzQnPfJt9/view?usp=sharing",
+        "https://drive.google.com/uc?id=18SE9Mon9ivsNmePuKb64SwwTzQnPfJt9",
         MODEL_PATH,
         quiet=False
     )
@@ -41,23 +41,21 @@ def build_deeplabv3():
 
     model = deeplabv3_resnet50(
         weights=None,
-        weights_backbone=None
+        weights_backbone=None,
+        aux_loss=True
     )
 
-    in_channels = model.classifier[4].in_channels
     model.classifier[4] = nn.Conv2d(
-        in_channels,
+        model.classifier[4].in_channels,
         2,
         kernel_size=1
     )
 
-    if model.aux_classifier is not None:
-        in_channels_aux = model.aux_classifier[4].in_channels
-        model.aux_classifier[4] = nn.Conv2d(
-            in_channels_aux,
-            2,
-            kernel_size=1
-        )
+    model.aux_classifier[4] = nn.Conv2d(
+        model.aux_classifier[4].in_channels,
+        2,
+        kernel_size=1
+    )
 
     return model
 
@@ -68,7 +66,10 @@ checkpoint = torch.load(
     map_location=DEVICE
 )
 
-model.load_state_dict(checkpoint)
+print(type(checkpoint))
+
+if isinstance(checkpoint, dict):
+    print(checkpoint.keys())
 
 model.to(DEVICE)
 
