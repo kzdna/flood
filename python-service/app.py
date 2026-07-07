@@ -61,6 +61,11 @@ def build_deeplabv3():
 
 model = build_deeplabv3()
 
+print("Torch:", torch.__version__)
+print("Torchvision:", __import__("torchvision").__version__)
+print("Aux classifier:", model.aux_classifier)
+print("Aux exists:", model.aux_classifier is not None)
+
 checkpoint = torch.load(
     MODEL_PATH,
     map_location=DEVICE
