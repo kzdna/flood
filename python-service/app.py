@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 
 import os
+import gdown
 import uuid
 import numpy as np
 from PIL import Image
@@ -22,6 +23,13 @@ CORS(app)
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 MODEL_PATH = "best_deeplabv3_flood.pth"
+
+if not os.path.exists(MODEL_PATH):
+    gdown.download(
+        "https://drive.google.com/uc?id=1mfoUWVcW7AeYquFMUvzxCnKQJYJ1BP0Y",
+        MODEL_PATH,
+        quiet=False
+    )
 
 UPLOAD_FOLDER = "uploads"
 RESULT_FOLDER = "results"
@@ -234,9 +242,11 @@ def predict():
 
     })
 
+import os
+
 if __name__ == "__main__":
     app.run(
         host="0.0.0.0",
-        port=5000,
-        debug=True
+        port=int(os.environ.get("PORT", 8080)),
+        debug=False
     )
