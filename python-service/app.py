@@ -184,8 +184,6 @@ def health():
         "status": "ok"
     })
 
-print("===== PREDICT MASUK =====")
-
 @app.post("/api/predict")
 def predict():
 
@@ -208,12 +206,9 @@ def predict():
 
         image.save(image_path)
 
-        print("Image saved:", image_path)
-
         img_orig, pred_mask, overlay, confidence, flood_area = predict_single(
             image_path
         )
-        print("Predict selesai")
 
         prediction = (
             "Flood"
