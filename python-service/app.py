@@ -51,12 +51,13 @@ def build_deeplabv3():
         kernel_size=1
     )
 
-    in_channels_aux = model.aux_classifier[4].in_channels
-    model.aux_classifier[4] = nn.Conv2d(
-        in_channels_aux,
-        2,
-        kernel_size=1
-    )
+    if model.aux_classifier is not None:
+        in_channels_aux = model.aux_classifier[4].in_channels
+        model.aux_classifier[4] = nn.Conv2d(
+            in_channels_aux,
+            2,
+            kernel_size=1
+        )
 
     return model
 
