@@ -22,7 +22,7 @@ CORS(app)
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-MODEL_PATH = "best_deeplabv3_flood.pth"
+MODEL_PATH = "best_deeplabv3_flood_inference.pth"
 
 if not os.path.exists(MODEL_PATH):
     gdown.download(
@@ -40,7 +40,8 @@ os.makedirs(RESULT_FOLDER, exist_ok=True)
 def build_deeplabv3():
 
     model = deeplabv3_resnet50(
-        weights=DeepLabV3_ResNet50_Weights.DEFAULT
+        weights=None,
+        weights_backbone=None
     )
 
     in_channels = model.classifier[4].in_channels
@@ -63,13 +64,10 @@ model = build_deeplabv3()
 
 checkpoint = torch.load(
     MODEL_PATH,
-    map_location=DEVICE,
-    weights_only=False
+    map_location=DEVICE
 )
 
-model.load_state_dict(
-    checkpoint["model_state_dict"]
-)
+model.load_state_dict(checkpoint)
 
 model.to(DEVICE)
 

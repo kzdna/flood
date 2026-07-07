@@ -27,4 +27,4 @@ Homestead.yaml
 Thumbs.db
 python-service/uploads/
 python-service/results/
-python-service/best_deeplabv3_flood.pth
+python-service/*.pth
