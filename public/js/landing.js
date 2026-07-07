@@ -60,7 +60,7 @@
 
   /* ---------- AI Prediction Widget ---------- */
 
-var AI_API = "http://127.0.0.1:5000/api/predict";
+var AI_API = "https://flood-production-af06.up.railway.app/api/predict";
 
 var imageInput = document.getElementById("imageInput");
 var previewImage = document.getElementById("previewImage");
@@ -133,37 +133,34 @@ if (predictBtn) {
         );
 
         fetch(AI_API, {
-
             method: "POST",
-
             body: formData
-
         })
+        .then(async function(response){
 
-        .then(function (response) {
+            if(!response.ok){
+                throw new Error(await response.text());
+            }
 
             return response.json();
 
         })
+        .then(function(data){
 
-        .then(function (data) {
+            prediction.textContent = data.prediction;
 
-            prediction.textContent =
-                data.prediction;
+            confidence.textContent = data.confidence + "%";
 
-            confidence.textContent =
-                data.confidence + "%";
+            if(floodArea){
+                floodArea.textContent = data.flood_area + "%";
+            }
 
-            if (floodArea)
-                floodArea.textContent =
-                    data.flood_area + "%";
-
-            predictStatus.textContent =
-                "Analisis selesai.";
+            predictStatus.textContent = "Analisis selesai.";
 
         })
+        .catch(function(err){
 
-        .catch(function () {
+            console.error(err);
 
             predictStatus.textContent =
                 "Tidak dapat terhubung ke layanan AI.";
