@@ -89,14 +89,17 @@ print(type(checkpoint))
 if isinstance(checkpoint, dict):
     print(checkpoint.keys())
 
-model.to(DEVICE)
+model.load_state_dict(checkpoint)
 
+del checkpoint
+
+model.to(DEVICE)
 model.eval()
 
 print("✅ Model berhasil dimuat")
 
 transform = transforms.Compose([
-    transforms.Resize((512, 512)),
+    transforms.Resize((256, 256)),
     transforms.ToTensor(),
     transforms.Normalize(
         mean=(0.485, 0.456, 0.406),
