@@ -186,48 +186,12 @@ def health():
 
 @app.post("/api/predict")
 def predict():
-
-    try:
-
-        print("1. Request masuk", flush=True)
-
-        if "image" not in request.files:
-            return jsonify({"error":"No image"}),400
-
-        print("2. Ada image", flush=True)
-
-        image = request.files["image"]
-
-        filename = f"{uuid.uuid4()}.png"
-
-        image_path = os.path.join(UPLOAD_FOLDER, filename)
-
-        image.save(image_path)
-
-        print("3. Image tersimpan", flush=True)
-
-        img_orig, pred_mask, overlay, confidence, flood_area = predict_single(image_path)
-
-        print("4. Predict selesai", flush=True)
-
-        prediction = "Flood" if flood_area >= 5 else "No Flood"
-
-        return jsonify({
-            "success":True,
-            "prediction":prediction,
-            "confidence":round(confidence,2),
-            "flood_area":round(flood_area,2)
-        })
-
-    except Exception as e:
-
-        import traceback
-
-        traceback.print_exc()
-
-        return jsonify({
-            "error":str(e)
-        }),500
+    return jsonify({
+        "success": True,
+        "prediction": "TEST",
+        "confidence": 99,
+        "flood_area": 12
+    })
 
 import os
 
