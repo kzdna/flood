@@ -189,48 +189,47 @@ def predict():
 
     try:
 
+        print("STEP 1")
+
         if "image" not in request.files:
-            return jsonify({
-                "success": False,
-                "message": "Tidak ada gambar."
-            }), 400
+            return jsonify({"error":"no image"}),400
 
-        image = request.files["image"]
+        print("STEP 2")
 
-        filename = f"{uuid.uuid4()}.png"
+        image=request.files["image"]
 
-        image_path = os.path.join(
-            UPLOAD_FOLDER,
-            filename
-        )
+        filename=f"{uuid.uuid4()}.png"
+
+        image_path=os.path.join(UPLOAD_FOLDER,filename)
 
         image.save(image_path)
 
-        img_orig, pred_mask, overlay, confidence, flood_area = predict_single(
-            image_path
-        )
+        print("STEP 3")
 
-        prediction = (
-            "Flood"
-            if flood_area >= 5
-            else "No Flood"
-        )
+        img_orig,pred_mask,overlay,confidence,flood_area=predict_single(image_path)
+
+        print("STEP 4")
+
+        prediction="Flood" if flood_area>=5 else "No Flood"
+
+        print("STEP 5")
 
         return jsonify({
-            "success": True,
-            "prediction": prediction,
-            "confidence": round(confidence,2),
-            "flood_area": round(flood_area,2)
+            "success":True,
+            "prediction":prediction,
+            "confidence":round(confidence,2),
+            "flood_area":round(flood_area,2)
         })
 
     except Exception as e:
 
         import traceback
-
         traceback.print_exc()
 
+        print("ERROR:",e)
+
         return jsonify({
-            "error": str(e)
+            "error":str(e)
         }),500
 
 import os
