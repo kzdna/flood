@@ -9,8 +9,7 @@ from PIL import Image
 import torch
 import torch.nn as nn
 
-import albumentations as A
-from albumentations.pytorch import ToTensorV2
+import torchvision.transforms as transforms
 
 from torchvision.models.segmentation import (
     deeplabv3_resnet50,
@@ -70,27 +69,27 @@ model.eval()
 
 print("✅ Model berhasil dimuat")
 
-transform = A.Compose([
-    A.Resize(512, 512),
-    A.Normalize(
+transform = transforms.Compose([
+    transforms.Resize((512, 512)),
+    transforms.ToTensor(),
+    transforms.Normalize(
         mean=(0.485, 0.456, 0.406),
         std=(0.229, 0.224, 0.225)
-    ),
-    ToTensorV2(),
+    )
 ])
 
 
 def predict_single(image_path):
 
-    img_orig = np.array(
-        Image.open(image_path).convert("RGB")
-    )
+    img_pil = Image.open(image_path).convert("RGB")
 
-    h, w = img_orig.shape[:2]
+    w, h = img_pil.size
+
+    img_orig = np.array(img_pil)
 
     img_tensor = transform(
-        image=img_orig
-    )["image"].unsqueeze(0).to(DEVICE)
+        img_pil
+    ).unsqueeze(0).to(DEVICE)
 
     with torch.no_grad():
 
