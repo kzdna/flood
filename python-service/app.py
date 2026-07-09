@@ -192,6 +192,7 @@ def predict():
         image = request.files["image"]
 
         filename = f"{uuid.uuid4()}.png"
+
         image_path = os.path.join(
             UPLOAD_FOLDER,
             filename
@@ -204,25 +205,37 @@ def predict():
         ).unsqueeze(0).to(DEVICE)
 
         with torch.no_grad():
+
             output = model(img_tensor)["out"]
 
         prob_map = torch.softmax(
             output,
             dim=1
-        )[0,1].cpu().numpy()
+        )[0, 1].cpu().numpy()
+
+        mask_bool = prob_map > 0.5
 
         pred_mask = mask_bool.astype(np.uint8)
 
+        confidence = float(
+            prob_map.mean() * 100
+        )
+
+        flood_area = float(
+            pred_mask.mean() * 100
+        )
+
         return jsonify({
             "prediction": str(pred_mask.shape),
-            "confidence": 100,
-            "flood_area": 0
+            "confidence": round(confidence, 2),
+            "flood_area": round(flood_area, 2)
         })
 
     except Exception as e:
+
         return jsonify({
             "error": str(e)
-        }),500
+        }), 500
 
 import os
 
