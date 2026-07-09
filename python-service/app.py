@@ -133,13 +133,11 @@ def predict_single(image_path):
         prob_map > 0.5
     ).astype(np.uint8)
 
-    confidence = float(
-        prob_map.mean() * 100
-    )
+    confidence = float(prob_map.mean() * 100)
+    flood_area = float(pred_mask.mean() * 100)
 
-    flood_area = float(
-        pred_mask.mean() * 100
-    )
+    max_prob = float(prob_map.max() * 100)
+    min_prob = float(prob_map.min() * 100)
 
     mask_resized = Image.fromarray(
         (pred_mask * 255).astype(np.uint8)
@@ -163,13 +161,13 @@ def predict_single(image_path):
         img_orig * 0.5
     ).astype(np.uint8)
 
-    return (
-        img_orig,
-        pred_mask,
-        overlay,
-        confidence,
-        flood_area
-    )
+    return jsonify({
+    "prediction": prediction,
+    "confidence": round(confidence,2),
+    "flood_area": round(flood_area,2),
+    "max_prob": round(max_prob,2),
+    "min_prob": round(min_prob,2)
+})
 
 @app.get("/")
 def home():
