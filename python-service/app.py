@@ -206,14 +206,10 @@ def predict():
         with torch.no_grad():
             output = model(img_tensor)["out"]
 
-        pred_mask = np.where(
-            prob_map > 0.5,
-            1,
-            0
-        )
+        mask_bool = prob_map > 0.5
 
         return jsonify({
-            "prediction": str(pred_mask.shape),
+            "prediction": str(mask_bool.dtype),
             "confidence": 100,
             "flood_area": 0
         })
