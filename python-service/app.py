@@ -213,7 +213,7 @@ def predict():
             dim=1
         )[0, 1].cpu().numpy()
 
-        mask_bool = prob_map > 0.5
+        mask_bool = prob_map > 0.1 
 
         pred_mask = mask_bool.astype(np.uint8)
 
