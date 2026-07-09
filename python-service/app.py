@@ -207,7 +207,7 @@ def predict():
             output = model(img_tensor)
 
         return jsonify({
-            "prediction": str(type(output)),
+            "prediction": str(output.keys()),
             "confidence": 100,
             "flood_area": 0
         })
