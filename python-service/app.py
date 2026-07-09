@@ -99,7 +99,7 @@ model.eval()
 print("✅ Model berhasil dimuat")
 
 transform = transforms.Compose([
-    transforms.Resize((128, 128)),
+    transforms.Resize((64,64)),
     transforms.ToTensor(),
     transforms.Normalize(
         mean=(0.485, 0.456, 0.406),
@@ -187,43 +187,41 @@ def health():
 @app.post("/api/predict")
 def predict():
 
-    if "image" not in request.files:
-        return jsonify({"error":"no image"}),400
-
-    image = request.files["image"]
-
-    filename = f"{uuid.uuid4()}.png"
-
-    image_path = os.path.join(
-        UPLOAD_FOLDER,
-        filename
-    )
-
-    image.save(image_path)
-
-    img_pil = Image.open(image_path).convert("RGB")
-
-    img_tensor = transform(
-        img_pil
-    ).unsqueeze(0).to(DEVICE)
-
     try:
-        with torch.no_grad():
-            output = model(img_tensor)
+
+        if "image" not in request.files:
+            return jsonify({
+                "success": False,
+                "message": "image not found"
+            }), 400
+
+        image = request.files["image"]
+
+        filename = f"{uuid.uuid4()}.png"
+
+        image_path = os.path.join(
+            UPLOAD_FOLDER,
+            filename
+        )
+
+        image.save(image_path)
+
+        img_tensor = transform(
+            Image.open(image_path).convert("RGB")
+        ).unsqueeze(0).to(DEVICE)
 
         return jsonify({
-            "prediction":"MODEL OK",
-            "confidence":100,
-            "flood_area":0
+            "success": True,
+            "prediction": "TENSOR OK",
+            "confidence": 100,
+            "flood_area": 0
         })
 
     except Exception as e:
         return jsonify({
-            "prediction":"MODEL ERROR",
-            "confidence":0,
-            "flood_area":0,
-            "error":str(e)
-        }),500
+            "success": False,
+            "error": str(e)
+        }), 500
 
 import os
 
