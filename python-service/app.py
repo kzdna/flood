@@ -206,6 +206,11 @@ def predict():
         with torch.no_grad():
             output = model(img_tensor)["out"]
 
+        prob_map = torch.softmax(
+            output,
+            dim=1
+        )[0,1].cpu().numpy()
+
         mask_bool = prob_map > 0.5
 
         return jsonify({
