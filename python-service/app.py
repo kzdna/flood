@@ -211,35 +211,37 @@ def predict():
             dim=1
         )[0, 1].cpu().numpy()
 
-        mask_bool = prob_map > 0.1 
+        # threshold
+        pred_mask = (
+            prob_map > 0.1
+        ).astype(np.uint8)
 
-        pred_mask = mask_bool.astype(np.uint8)
-
-        confidence = float(
-            prob_map.mean() * 100
-        )
-
+        # hitung luas area banjir
         flood_area = float(
             pred_mask.mean() * 100
         )
 
-        try:
-            prediction = (
-                "Flood Detected"
-                if flood_area > 1
-                else "No Flood"
+        # confidence hanya pada area yang dianggap banjir
+        if pred_mask.sum() > 0:
+            confidence = float(
+                prob_map[pred_mask == 1].mean() * 100
+            )
+        else:
+            confidence = float(
+                prob_map.max() * 100
             )
 
-            return jsonify({
-                "prediction": prediction,
-                "confidence": round(confidence, 2),
-                "flood_area": round(flood_area, 2)
-            })
+        prediction = (
+            "Flood Detected"
+            if flood_area > 1
+            else "No Flood"
+        )
 
-        except Exception as e:
-            return jsonify({
-                "error": str(e)
-            }), 500
+        return jsonify({
+            "prediction": prediction,
+            "confidence": round(confidence, 2),
+            "flood_area": round(flood_area, 2)
+        })
 
     except Exception as e:
 
