@@ -189,16 +189,9 @@ def predict():
 
     try:
 
-        if "image" not in request.files:
-            return jsonify({
-                "success": False,
-                "message": "image not found"
-            }), 400
-
         image = request.files["image"]
 
         filename = f"{uuid.uuid4()}.png"
-
         image_path = os.path.join(
             UPLOAD_FOLDER,
             filename
@@ -210,18 +203,22 @@ def predict():
             Image.open(image_path).convert("RGB")
         ).unsqueeze(0).to(DEVICE)
 
+        with torch.no_grad():
+            output = model(img_tensor)
+
         return jsonify({
             "success": True,
-            "prediction": "TENSOR OK",
+            "prediction": "MODEL RUN OK",
             "confidence": 100,
             "flood_area": 0
         })
 
     except Exception as e:
+
         return jsonify({
             "success": False,
             "error": str(e)
-        }), 500
+        }),500
 
 import os
 
