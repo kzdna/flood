@@ -188,7 +188,9 @@ def health():
 def predict():
 
     if "image" not in request.files:
-        return jsonify({"error":"no image"}),400
+        return jsonify({
+            "error": "no image"
+        }),400
 
     image = request.files["image"]
 
@@ -208,7 +210,9 @@ def predict():
     ).unsqueeze(0).to(DEVICE)
 
     return jsonify({
-        "success": True,
+        "prediction": "TENSOR OK",
+        "confidence": 100,
+        "flood_area": 0,
         "shape": str(img_tensor.shape)
     })
 
