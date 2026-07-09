@@ -204,10 +204,10 @@ def predict():
         ).unsqueeze(0).to(DEVICE)
 
         with torch.no_grad():
-            output = model(img_tensor)
+            output = model(img_tensor)["out"]
 
         return jsonify({
-            "prediction": str(output.keys()),
+            "prediction": str(output.shape),
             "confidence": 100,
             "flood_area": 0
         })
