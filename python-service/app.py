@@ -209,7 +209,7 @@ def predict():
         prob_map = torch.softmax(
             output,
             dim=1
-        )
+        )[0,1]
 
         return jsonify({
             "prediction": str(prob_map.shape),
