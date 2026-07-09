@@ -206,9 +206,11 @@ def predict():
         with torch.no_grad():
             output = model(img_tensor)["out"]
 
-        pred_mask = (
-            prob_map > 0.5
-        ).astype(np.uint8)
+        pred_mask = np.where(
+            prob_map > 0.5,
+            1,
+            0
+        )
 
         return jsonify({
             "prediction": str(pred_mask.shape),
