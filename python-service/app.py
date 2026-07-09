@@ -225,11 +225,23 @@ def predict():
             pred_mask.mean() * 100
         )
 
-        return jsonify({
-            "prediction": "Flood Detected" if flood_area > 1 else "No Flood",
-            "confidence": round(confidence, 2),
-            "flood_area": round(flood_area, 2)
-        })
+        try:
+            prediction = (
+                "Flood Detected"
+                if flood_area > 1
+                else "No Flood"
+            )
+
+            return jsonify({
+                "prediction": prediction,
+                "confidence": round(confidence, 2),
+                "flood_area": round(flood_area, 2)
+            })
+
+        except Exception as e:
+            return jsonify({
+                "error": str(e)
+            }), 500
 
     except Exception as e:
 
