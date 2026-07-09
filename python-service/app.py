@@ -211,10 +211,10 @@ def predict():
             dim=1
         )[0,1].cpu().numpy()
 
-        mask_bool = prob_map > 0.5
+        pred_mask = mask_bool.astype(np.uint8)
 
         return jsonify({
-            "prediction": str(mask_bool.dtype),
+            "prediction": str(pred_mask.shape),
             "confidence": 100,
             "flood_area": 0
         })
