@@ -206,13 +206,12 @@ def predict():
         with torch.no_grad():
             output = model(img_tensor)["out"]
 
-        prob_map = torch.softmax(
-            output,
-            dim=1
-        )[0,1].cpu().numpy()
+        pred_mask = (
+            prob_map > 0.5
+        ).astype(np.uint8)
 
         return jsonify({
-            "prediction": str(prob_map.shape),
+            "prediction": str(pred_mask.shape),
             "confidence": 100,
             "flood_area": 0
         })
