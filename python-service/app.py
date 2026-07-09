@@ -226,7 +226,7 @@ def predict():
         )
 
         return jsonify({
-            "prediction": str(pred_mask.shape),
+            "prediction": "Flood Detected" if flood_area > 1 else "No Flood",
             "confidence": round(confidence, 2),
             "flood_area": round(flood_area, 2)
         })
