@@ -211,17 +211,14 @@ def predict():
             dim=1
         )[0, 1].cpu().numpy()
 
-        # threshold
         pred_mask = (
             prob_map > 0.1
         ).astype(np.uint8)
 
-        # hitung luas area banjir
         flood_area = float(
             pred_mask.mean() * 100
         )
 
-        # confidence hanya pada area yang dianggap banjir
         if pred_mask.sum() > 0:
             confidence = float(
                 prob_map[pred_mask == 1].mean() * 100
