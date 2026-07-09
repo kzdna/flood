@@ -207,16 +207,13 @@ def predict():
             output = model(img_tensor)
 
         return jsonify({
-            "success": True,
-            "prediction": "MODEL RUN OK",
+            "prediction": str(type(output)),
             "confidence": 100,
             "flood_area": 0
         })
 
     except Exception as e:
-
         return jsonify({
-            "success": False,
             "error": str(e)
         }),500
 
