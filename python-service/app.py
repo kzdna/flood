@@ -188,9 +188,7 @@ def health():
 def predict():
 
     if "image" not in request.files:
-        return jsonify({
-            "error": "no image"
-        }),400
+        return jsonify({"error":"no image"}),400
 
     image = request.files["image"]
 
@@ -209,12 +207,23 @@ def predict():
         img_pil
     ).unsqueeze(0).to(DEVICE)
 
-    return jsonify({
-        "prediction": "TENSOR OK",
-        "confidence": 100,
-        "flood_area": 0,
-        "shape": str(img_tensor.shape)
-    })
+    try:
+        with torch.no_grad():
+            output = model(img_tensor)
+
+        return jsonify({
+            "prediction":"MODEL OK",
+            "confidence":100,
+            "flood_area":0
+        })
+
+    except Exception as e:
+        return jsonify({
+            "prediction":"MODEL ERROR",
+            "confidence":0,
+            "flood_area":0,
+            "error":str(e)
+        }),500
 
 import os
 
